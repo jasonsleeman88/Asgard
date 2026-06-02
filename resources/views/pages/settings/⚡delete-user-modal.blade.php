@@ -1,7 +1,7 @@
 <?php
 
-use App\Concerns\PasswordValidationRules;
 use App\Livewire\Actions\Logout;
+use App\User\Concerns\PasswordValidationRules;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
@@ -35,7 +35,7 @@ new class extends Component {
             </flux:subheading>
         </div>
 
-        <flux:input wire:model="password" :label="__('Password')" type="password" viewable />
+        <flux:input wire:model="password" :label="__('Password')" type="password" viewable/>
 
         <div class="flex justify-end space-x-2 rtl:space-x-reverse">
             <flux:modal.close>

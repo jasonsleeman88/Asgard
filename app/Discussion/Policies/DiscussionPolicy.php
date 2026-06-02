@@ -1,0 +1,50 @@
+<?php
+
+namespace App\Discussion\Policies;
+
+use App\Discussion\Models\Discussion;
+use App\Discussion\Settings\DiscussionSettings;
+use App\Gate\Policies\AbstractPolicy;
+use App\User\Models\User;
+
+class DiscussionPolicy extends AbstractPolicy
+{
+    public function __construct(protected DiscussionSettings $settings) {}
+
+    public function can(User $actor, $ability): ?string
+    {
+        if ($actor->hasPermission('discussion.'.$ability)) {
+            return $this->allow();
+        }
+
+        return null;
+    }
+
+    public function rename(User $actor, Discussion $discussion): ?string
+    {
+        if ($discussion->user_id == $actor->id && $actor->can('reply', $discussion)) {
+            $allowRenaming = $this->settings->allow_renaming;
+
+            if ($allowRenaming === '-1'
+                || ($allowRenaming === 'reply' && $discussion->participant_count <= 1)
+                || (is_numeric($allowRenaming) && $discussion->created_at->diffInMinutes() < $allowRenaming)) {
+                return $this->allow();
+            }
+        }
+
+        return null;
+    }
+
+    public function hide(User $actor, Discussion $discussion): ?string
+    {
+        if ($discussion->user_id == $actor->id
+            && $discussion->participant_count <= 1
+            && (! $discussion->hidden_at || $discussion->hidden_user_id == $actor->id)
+            && $actor->can('reply', $discussion)
+        ) {
+            return $this->allow();
+        }
+
+        return null;
+    }
+}

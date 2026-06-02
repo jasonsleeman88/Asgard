@@ -1,9 +1,13 @@
 <?php
 
-use App\Concerns\ProfileValidationRules;
+
 /* @chisel-email-verification */
+
+use App\User\Concerns\ProfileValidationRules;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
+
 /* @end-chisel-email-verification */
+
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
@@ -11,10 +15,11 @@ use Livewire\Attributes\Computed;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-new #[Title('Profile settings')] class extends Component {
+new #[Title('Profile settings')]
+class extends Component {
     use ProfileValidationRules;
 
-    public string $name = '';
+    public string $username = '';
     public string $email = '';
 
     /**
@@ -22,7 +27,7 @@ new #[Title('Profile settings')] class extends Component {
      */
     public function mount(): void
     {
-        $this->name = Auth::user()->name;
+        $this->username = Auth::user()->username;
         $this->email = Auth::user()->email;
     }
 
@@ -43,7 +48,7 @@ new #[Title('Profile settings')] class extends Component {
 
         $user->save();
 
-        Flux::toast(variant: 'success', text: __('Profile updated.'));
+        Flux::toast(text: __('Profile updated.'), variant: 'success');
     }
 
     /* @chisel-email-verification */
@@ -68,13 +73,13 @@ new #[Title('Profile settings')] class extends Component {
     #[Computed]
     public function hasUnverifiedEmail(): bool
     {
-        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+        return Auth::user() instanceof MustVerifyEmail && !Auth::user()->hasVerifiedEmail();
     }
 
     #[Computed]
     public function showDeleteUser(): bool
     {
-        return ! Auth::user() instanceof MustVerifyEmail
+        return !Auth::user() instanceof MustVerifyEmail
             || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
     /* @end-chisel-email-verification */
@@ -87,10 +92,11 @@ new #[Title('Profile settings')] class extends Component {
 
     <x-pages::settings.layout :heading="__('Profile')" :subheading="__('Update your name and email address')">
         <form wire:submit="updateProfileInformation" class="my-6 w-full space-y-6">
-            <flux:input wire:model="name" :label="__('Name')" type="text" required autofocus autocomplete="name" />
+            <flux:input wire:model="username" :label="__('Username')" type="text" required autofocus
+                        autocomplete="username"/>
 
             <div>
-                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email" />
+                <flux:input wire:model="email" :label="__('Email')" type="email" required autocomplete="email"/>
 
                 {{-- @chisel-email-verification --}}
                 @if ($this->hasUnverifiedEmail)
@@ -98,7 +104,8 @@ new #[Title('Profile settings')] class extends Component {
                         <flux:text class="mt-4">
                             {{ __('Your email address is unverified.') }}
 
-                            <flux:link class="text-sm cursor-pointer" wire:click.prevent="resendVerificationNotification">
+                            <flux:link class="text-sm cursor-pointer"
+                                       wire:click.prevent="resendVerificationNotification">
                                 {{ __('Click here to re-send the verification email.') }}
                             </flux:link>
                         </flux:text>
@@ -125,9 +132,9 @@ new #[Title('Profile settings')] class extends Component {
 
         {{-- @chisel-email-verification --}}
         @if ($this->showDeleteUser)
-        {{-- @end-chisel-email-verification --}}
-            <livewire:pages::settings.delete-user-form />
-        {{-- @chisel-email-verification --}}
+            {{-- @end-chisel-email-verification --}}
+            <livewire:pages::settings.delete-user-form/>
+            {{-- @chisel-email-verification --}}
         @endif
         {{-- @end-chisel-email-verification --}}
     </x-pages::settings.layout>

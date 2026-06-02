@@ -15,6 +15,10 @@ require __DIR__.'/../vendor/autoload.php';
 
 // Bootstrap Laravel and handle the request...
 /** @var Application $app */
-$app = require_once __DIR__.'/../bootstrap/app.php';
+if (file_exists(__DIR__.'/../installed.json')) {
+    $app = require_once __DIR__.'/../bootstrap/app.php';
+} else {
+    $app = require_once __DIR__.'/../bootstrap/uninstalled.php';
+}
 
 $app->handleRequest(Request::capture());

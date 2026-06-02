@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\User\Models\User;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Fortify\Features;
 use Livewire\Livewire;

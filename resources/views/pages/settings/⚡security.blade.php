@@ -1,6 +1,6 @@
 <?php
 
-use App\Concerns\PasswordValidationRules;
+use App\User\Concerns\PasswordValidationRules;
 use Flux\Flux;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
@@ -9,15 +9,22 @@ use Laravel\Fortify\Features;
 use Laravel\Fortify\Fortify;
 use Livewire\Attributes\Title;
 use Livewire\Component;
+
 /* @chisel-passkeys */
+
 use Laravel\Passkeys\Actions\DeletePasskey;
 use Livewire\Attributes\Locked;
+
 /* @end-chisel-passkeys */
+
 /* @chisel-2fa */
+
 use Livewire\Attributes\On;
+
 /* @end-chisel-2fa */
 
-new #[Title('Security settings')] class extends Component {
+new #[Title('Security settings')]
+class extends Component {
     use PasswordValidationRules;
 
     public string $current_password = '';
@@ -110,7 +117,7 @@ new #[Title('Security settings')] class extends Component {
             ->select(['id', 'name', 'credential', 'created_at', 'last_used_at'])
             ->latest()
             ->get()
-            ->map(fn ($passkey) => [
+            ->map(fn($passkey) => [
                 'id' => $passkey->id,
                 'name' => $passkey->name,
                 'authenticator' => $passkey->authenticator,
@@ -137,7 +144,7 @@ new #[Title('Security settings')] class extends Component {
      */
     public function deletePasskey(DeletePasskey $deletePasskey): void
     {
-        if (! $this->deletingPasskeyId) {
+        if (!$this->deletingPasskeyId) {
             return;
         }
 
@@ -187,7 +194,8 @@ new #[Title('Security settings')] class extends Component {
 
     <flux:heading class="sr-only">{{ __('Security settings') }}</flux:heading>
 
-    <x-pages::settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
+    <x-pages::settings.layout :heading="__('Update password')"
+                              :subheading="__('Ensure your account is using a long, random password to stay secure')">
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
             <flux:input
                 wire:model="current_password"
@@ -245,7 +253,7 @@ new #[Title('Security settings')] class extends Component {
                                 </flux:button>
                             </div>
 
-                            <livewire:pages::settings.two-factor.recovery-codes :$requiresConfirmation />
+                            <livewire:pages::settings.two-factor.recovery-codes :$requiresConfirmation/>
                         </div>
                     @else
                         <div class="space-y-4">
@@ -262,7 +270,8 @@ new #[Title('Security settings')] class extends Component {
                                 </flux:button>
                             </flux:modal.trigger>
 
-                            <livewire:pages::settings.two-factor-setup-modal :requires-confirmation="$requiresConfirmation" />
+                            <livewire:pages::settings.two-factor-setup-modal
+                                :requires-confirmation="$requiresConfirmation"/>
                         </div>
                     @endif
                 </div>
@@ -279,10 +288,12 @@ new #[Title('Security settings')] class extends Component {
                 <div class="mt-6 flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
                     <div class="border rounded-lg border-zinc-200 dark:border-zinc-700 overflow-hidden">
                         @forelse ($passkeys as $passkey)
-                            <div class="flex items-center justify-between p-4 {{ ! $loop->last ? 'border-b border-zinc-200 dark:border-zinc-700' : '' }}">
+                            <div
+                                class="flex items-center justify-between p-4 {{ ! $loop->last ? 'border-b border-zinc-200 dark:border-zinc-700' : '' }}">
                                 <div class="flex items-center gap-4">
-                                    <div class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
-                                        <flux:icon.key class="size-5 text-zinc-500 dark:text-zinc-400" />
+                                    <div
+                                        class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-zinc-100 dark:bg-zinc-800">
+                                        <flux:icon.key class="size-5 text-zinc-500 dark:text-zinc-400"/>
                                     </div>
                                     <div class="space-y-1">
                                         <div class="flex items-center gap-2.5">
@@ -312,16 +323,18 @@ new #[Title('Security settings')] class extends Component {
                             </div>
                         @empty
                             <div class="p-8 text-center">
-                                <div class="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800">
-                                    <flux:icon.key class="size-7 text-zinc-400 dark:text-zinc-500" />
+                                <div
+                                    class="mx-auto mb-4 flex size-14 items-center justify-center rounded-2xl bg-zinc-100 dark:bg-zinc-800">
+                                    <flux:icon.key class="size-7 text-zinc-400 dark:text-zinc-500"/>
                                 </div>
                                 <p class="font-medium">{{ __('No passkeys yet') }}</p>
-                                <flux:text class="mt-1">{{ __('Add a passkey to sign in without a password') }}</flux:text>
+                                <flux:text
+                                    class="mt-1">{{ __('Add a passkey to sign in without a password') }}</flux:text>
                             </div>
                         @endforelse
                     </div>
 
-                    <x-passkey-registration />
+                    <x-passkey-registration/>
                 </div>
             </section>
         @endif
